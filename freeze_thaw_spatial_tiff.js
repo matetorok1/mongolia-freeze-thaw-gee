@@ -79,6 +79,7 @@ function classifyFreezeThaw(date) {
     .where(condThawed, 3)
     .updateMask(combinedMask)
     .rename('FreezeThaw')
+    .toUnit8()
     .set('date', date.format('YYYY-MM-dd'));
 }
 

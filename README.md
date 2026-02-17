@@ -48,7 +48,7 @@ Classification is strictly constrained to **grassland pixels** with **active sno
 
 ## Citation
 If you use this code for research or reporting, please cite it as:
-> *Máté J. Török (2026). Mongolia Winter Freeze-Thaw-Snow Analysis Framework. GitHub Repository: https://github.com/matetorok1/mongolia-freeze-thaw-gee*
+> *Török, M. J. (2026). Mongolia Winter Freeze-Thaw-Snow Calculator (Version 1.0.0) [Computer software]. https://github.com/matetorok1/mongolia-freeze-thaw-gee*
 
 ## License
 Distributed under the MIT License. See `LICENSE` for more information.

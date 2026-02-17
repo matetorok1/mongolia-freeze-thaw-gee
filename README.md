@@ -1,43 +1,54 @@
-# Mongolia Winter Freeze-Thaw-Snow Calculator
+# Mongolia Winter Freeze-Thaw-Snow Analysis Framework
 
-This Google Earth Engine (GEE) script calculates the daily area (in km²) of three distinct phase states—Snow (Frozen), Freeze-Thaw (Transitional), and Thawed—across the grasslands of Mongolia during the winter seasons (October 1st to April 30th). 
+This repository provides a dual-approach Google Earth Engine (GEE) framework for monitoring winter thermodynamic states across Mongolian grasslands. It includes scripts for generating daily area statistics (CSV) and high-resolution spatial stacks (GeoTIFF) for the winter seasons of 2014–2023.
 
-To ensure high data quality and relevance, the classification is strictly limited to **snow-covered grasslands**.
+## Project Overview
+This project classifies three distinct phase states based on MODIS Land Surface Temperature (LST) and Snow Index (NDSI) data:
+1. **Snow (Frozen)**
+2. **Freeze-Thaw (Transitional)**
+3. **Thawed**
 
-## Data Sources
-* **Boundary:** FAO GAUL Level-0 (2015) - Country boundary of Mongolia.
-* **Land Cover:** MODIS/061/MCD12Q1 - Used to mask the study area strictly to Grasslands (`LC_Type1 == 10`).
-* **Snow Cover:** MODIS/061/MOD10A1 & MYD10A1 (Terra & Aqua) - Used to mask pixels for active snow cover (NDSI > 50).
-* **Land Surface Temperature (LST):** MODIS/061/MOD11A1 & MYD11A1 (Terra & Aqua) - Day and Night LST used for thermodynamic classification.
+Classification is strictly constrained to **grassland pixels** with **active snow cover** to ensure the data reflects snowpack thermodynamics rather than bare soil behavior.
 
-## Methodology & Classification Logic
-The script dynamically merges Terra and Aqua sensor data to reduce cloud-cover gaps. It evaluates the diurnal temperature cycle of each valid pixel using a predefined Celsius threshold (default: `-2°C`).
+### Classification Logic & Symbology
+| State | Phase | Temperature Logic (Diurnal) | Map Color |
+| :--- | :--- | :--- | :--- |
+| **1** | **Snow (Frozen)** | Day LST < -2°C & Night LST < -2°C | **Blue** |
+| **2** | **Freeze-Thaw** | Day LST ≥ -2°C & Night LST < -2°C | **Green** |
+| **3** | **Thawed** | Day LST ≥ -2°C & Night LST ≥ -2°C | **Red** |
 
+*Note: Area calculations are performed only on pixels where NDSI > 50.*
 
+---
 
-The three states are classified and visualized as follows:
-1. **Snow (Frozen)** * **Logic:** Day LST < -2°C **AND** Night LST < -2°C
-   * **Map Color:** Blue 
-   * **Chart Color:** Blue
-2. **Freeze-Thaw (Transitional)** * **Logic:** Day LST ≥ -2°C **AND** Night LST < -2°C
-   * **Map Color:** Green
-   * **Chart Color:** Green
-3. **Thawed** * **Logic:** Day LST ≥ -2°C **AND** Night LST ≥ -2°C
-   * **Map Color:** Red 
-   * **Chart Color:** Orange
+## Repository Structure
 
-*Note: Any pixel that does not represent a grassland, or does not have an NDSI > 50, is masked out and excluded from the final area calculation.*
+### 1. `freeze_thaw_stats_csv.js`
+**Use Case:** Generating time-series charts and numerical data for statistical analysis.
+- **Output:** Yearly CSV files containing daily area (km²) for each state.
+- **Optimization:** Processes data in yearly "chunks" to avoid GEE memory timeouts.
 
-## How to Run the Script
+### 2. `freeze_thaw_spatial_tiff.js`
+**Use Case:** Spatial analysis in GIS software (QGIS/ArcGIS).
+- **Output:** Multi-band GeoTIFFs (one per winter season).
+- **Structure:** Each band in the TIFF represents one day (Band 1 = Oct 1).
+- **Resolution:** 1000m (1km).
 
-### 1. Setup in Google Earth Engine
-1. Navigate to the [Google Earth Engine Code Editor](https://code.earthengine.google.com/).
-2. Create a new script and paste the contents of `freeze_thaw_calculator.js` into the editor.
+---
 
-### 2. Adjust User Parameters
-At the very top of the script, you can easily adjust the target parameters for your specific study:
-```javascript
-var startYear = 2014;       // First year of the study period
-var endYear = 2023;         // Last year of the study period 
-var ndsiThreshold = 50;     // NDSI threshold for valid snow cover
-var lstThreshold = -2;      // Celsius threshold for LST classification
+## Installation & Usage
+
+1. **Access Google Earth Engine:** Open the [GEE Code Editor](https://code.earthengine.google.com/).
+2. **Select a Script:** Choose either the CSV or TIFF script from this repository and paste it into the editor.
+3. **Configure Parameters:** Adjust `startYear`, `endYear`, and `lstThreshold` at the top of the script if necessary.
+4. **Run & Export:**
+   - Click **Run** to view the interactive map and preview chart.
+   - Open the **Tasks** tab in the top-right panel.
+   - Click **Run** on the individual tasks to begin the export to your Google Drive (`EarthEngine_Exports` folder).
+
+## Citation
+If you use this code for research or reporting, please cite it as:
+> *Máté J. Török (2026). Mongolia Winter Freeze-Thaw-Snow Analysis Framework. GitHub Repository: https://github.com/matetorok1/mongolia-freeze-thaw-gee*
+
+## License
+Distributed under the MIT License. See `LICENSE` for more information.
